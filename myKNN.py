@@ -1,28 +1,24 @@
 import numpy as np
 from sklearn.metrics import accuracy_score
 
-def euclidean_distance(x1, x2):
-    return np.sqrt(np.sum((x1 - x2) ** 2))
-
 class KNNClassifier:
-    def __init__(self, k=3):
+    def __init__(self, k=3) -> None:
         self.k = k
 
-    def fit(self, X, y):
-        self.X_train = X
-        self.y_train = y
+    def fit(self, X_train, y_train):
+        self.X_train = X_train
+        self.y_train = y_train
 
-    def predict(self, X):
-        y_pred = [self._predict(x) for x in X]
-        return np.array(y_pred)
+    def euclidean_distance(self, x, y):
+        return np.sqrt(sum([(x[i] - y[i]) ** 2 for i in range(len(x))]))
 
-    def _predict(self, x):
-        distances = [euclidean_distance(x, x_train) for x_train in self.X_train]
-        k_indices = np.argsort(distances)[:self.k]
-        k_nearest_labels = [self.y_train[i] for i in k_indices]
-        most_common = np.bincount(k_nearest_labels).argmax()
-        return most_common
+    def _predict(self, item):
+        most_frequent_y = [self.y_train._values[x] for x in
+                           np.argpartition([self.euclidean_distance(item, i) for i in self.X_train._values], self.k)[0:3]]
+        return max(most_frequent_y, key=lambda x: most_frequent_y.count(x))
 
+    def predict(self, X_test):
+        return [self._predict(x) for x in X_test._values]
 
 def runner(X_train, X_test, y_train, y_test):
     knn = KNNClassifier()

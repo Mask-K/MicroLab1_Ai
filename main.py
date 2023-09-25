@@ -25,4 +25,3 @@ else:
     mySVM.runner(X_train, X_test, y_train)
 
 
-
